@@ -7,6 +7,14 @@ $firstInput.focus();
 const $jobRoleInput = $('#other-title');
 $jobRoleInput.hide();
 
+$('#title').change( () => {
+	if ($('#title').val() === 'other') {
+		$jobRoleInput.show();
+	} else {
+		$jobRoleInput.hide();
+	}
+})
+
 //hide option element from design menu
 $("#design option:first-child").prop('hidden', true);
 
@@ -75,10 +83,10 @@ $('#payment option[value="select method"').hide();
 
 //on change show and hide payment methods
 $('#payment').change(event => {
-	function ShowHideElement(elementToShow, elementToHide, elementToHide) {
+	function ShowHideElement(elementToShow, firstElementToHide, secondElementToHide) {
 		$(elementToShow).show();
-		$(elementToHide).hide();
-		$(elementToHide).hide();
+		$(firstElementToHide).hide();
+		$(secondElementToHide).hide();
 	}
 	if ($(event.target).val() === 'Credit Card') {
 		ShowHideElement('#credit-card', '#paypal', '#bitcoin');
@@ -88,6 +96,11 @@ $('#payment').change(event => {
 		ShowHideElement('#bitcoin', '#credit-card', '#paypal');
 	}
 })
+
+//credit card payment method selected by default
+$('#payment option[value="Credit Card"]').attr('selected', 'selected');
+$('#paypal').hide();
+$('#bitcoin').hide();
 
 			//VALIDATION FUNCTIONS//
 
