@@ -102,14 +102,18 @@ $('#payment option[value="Credit Card"]').attr('selected', 'selected');
 $('#paypal').hide();
 $('#bitcoin').hide();
 
+			
 			//VALIDATION FUNCTIONS//
 
 
-const errMessageAddRemove = (validation, input) => {
+const errMessageAddRemove = (validation, input, name) => {
+	const label = $(`label[for='${input}']`)
 	if (validation === false) {
-		input.css('border-color', 'red')
+		label.text(`Invalid ${name}`)
+		label.css('color', 'red')
 	} else {
-		input.css('border-color', '#6F9DDC')
+		label.text(`${name}:`)
+		label.css('color', 'black')
 	}
 }
 
@@ -118,7 +122,7 @@ const nameValidation = () => {
 	const name = inputName.val();
 	const nameRegex = /[\w\-'\s]+/;
 	const nameVal = nameRegex.test(name);
-	errMessageAddRemove(nameVal, inputName);
+	errMessageAddRemove(nameVal, 'name', 'Name');
 	return nameVal
 }
 
@@ -127,7 +131,7 @@ const emailValidation = () => {
 	const emailInputValue = emailInput.val();
 	const mailRegex = /^[^@]+@[^@.]+\.[a-z]+$/i;
 	const mailValidation = mailRegex.test(emailInputValue);
-	errMessageAddRemove(mailValidation, emailInput);
+	errMessageAddRemove(mailValidation, 'mail', 'Email');
 	return mailValidation
 }
 
@@ -163,7 +167,7 @@ const cardNumberValidation = () => {
 	const ccNumber = ccInput.val();
 	const ccRegEx = /^[0-9]{13,16}$/;
 	const ccValidation =  ccRegEx.test(ccNumber);
-	errMessageAddRemove(ccValidation, ccInput);
+	errMessageAddRemove(ccValidation, 'cc-num', 'Card Number');
 	return ccValidation
 }
 
@@ -172,7 +176,7 @@ const zipCodeValidation = () => {
 	const zipCode = zipCodeInput.val();
 	const zipRegEx = /^[0-9]{5}$/;
 	const zipValidation =  zipRegEx.test(zipCode);
-	errMessageAddRemove(zipValidation, zipCodeInput);
+	errMessageAddRemove(zipValidation, 'zip', 'Zip Code');
 	return	zipValidation
 }
 
@@ -181,23 +185,27 @@ const cvvNumberValidation = () => {
 	const cvv = cvvInput.val();
 	const cvvRegEx = /^[0-9]{3}$/;
 	const cvvValidation = cvvRegEx.test(cvv);
-	errMessageAddRemove(cvvValidation, cvvInput);
+	errMessageAddRemove(cvvValidation, 'cvv', 'CVV');
 	return cvvValidation
 }
 
 const masterValidation = () => {
-	if (nameValidation() === true &&
-		emailValidation() === true &&
+	if (
+		isCreditCardSelected() === false &&
 		activityValidation() === true &&
-		isCreditCardSelected() === false) {
+		emailValidation() === true &&
+		nameValidation() === true
+	   ) {
 		return true
-	} else if (nameValidation() === true &&
-			   emailValidation() === true &&
-			   activityValidation() === true &&
-			   isCreditCardSelected() === true &&
-			   cardNumberValidation() ===true &&
-			   zipCodeValidation() === true &&
-			   cvvNumberValidation() === true) {
+	} else if (
+		isCreditCardSelected() === true &&
+	    cardNumberValidation() === true &&
+	    zipCodeValidation() === true &&
+		cvvNumberValidation() === true &&
+		nameValidation() === true &&
+		emailValidation() === true &&
+		activityValidation() === true
+		) {
 		return true
 	} else {
 		return false
@@ -206,9 +214,9 @@ const masterValidation = () => {
 
 // on submit form
 $('form').on('submit', event => {
+	event.preventDefault();
 	if (masterValidation() === false) {
-		event.preventDefault();
-		nameValidation();
+		nameValidation()
 		emailValidation();
 		activityValidation();
 		if (isCreditCardSelected() === true) {
